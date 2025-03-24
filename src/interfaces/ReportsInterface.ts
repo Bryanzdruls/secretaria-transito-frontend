@@ -1,9 +1,9 @@
 export interface ReportsInterface {
-    id_report:number;
-    vehicle:string;
+    trafficTicketId:number;
+    vehicleId:string;
     date: string;
     description:string;
     price:string
-    trafficAgent:string;
-    detectionCamera: string;
+    trafficAgentId:string;
+    detectionCameraId: string;
 }

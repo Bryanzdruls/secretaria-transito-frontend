@@ -34,15 +34,17 @@ export default function ListReports({reports}:Readonly<Props>) {
 
                 reports.length > 0 && reports.map((row) => (
                   <TableRow
-                    key={row.id_report}
+                    key={row.trafficTicketId}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {row.vehicle}
+                      {row.vehicleId}
                     </TableCell>
                     <TableCell align="center">{row.date}</TableCell>
                     <TableCell align="center">{row.description}</TableCell>
                     <TableCell align="center">{row.price}</TableCell>              
+                    <TableCell align="center">{row.trafficAgentId}</TableCell>              
+                    <TableCell align="center">{row.detectionCameraId}</TableCell>      
                   </TableRow>
                 ))              
               }
