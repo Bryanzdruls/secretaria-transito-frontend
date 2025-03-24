@@ -1,9 +1,9 @@
-import './App.css'
-import SignIn from './auth/SignIn'
+import './app.css'
+import { AppRouter } from './router/Router'
 
 function App() {
   return (
-    <SignIn></SignIn>
+    <AppRouter/>
   )
 }
 

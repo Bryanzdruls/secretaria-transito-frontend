@@ -10,14 +10,14 @@ import { VehicleInterface } from '../interfaces/VehiclesInterface';
 import { Typography } from '@mui/material';
 
 interface Props {
-    vehicles:VehicleInterface[]
+    reports:VehicleInterface[]
 }
 
-export default function ListVehicle({vehicles}:Readonly<Props>) {
+export default function ListReports({reports}:Readonly<Props>) {
   return (
     <TableContainer component={Paper}>
       {
-        vehicles.length > 0 ? (
+        reports.length > 0 ? (
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -30,7 +30,7 @@ export default function ListVehicle({vehicles}:Readonly<Props>) {
             <TableBody>
               {
 
-                vehicles.length > 0 && vehicles.map((row) => (
+                reports.length > 0 && reports.map((row) => (
                   <TableRow
                     key={row.id_vehicle}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -49,7 +49,7 @@ export default function ListVehicle({vehicles}:Readonly<Props>) {
         ):
         ( 
           <Typography variant='h4' align='center' sx={{padding: '20px', marginLeft: '20px'}}>
-            No hay vehiculos.
+            No hay reportes disponibles.
           </Typography>  
         )
       }

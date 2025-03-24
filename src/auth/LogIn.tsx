@@ -13,7 +13,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../theme/AppTheme';
 import ColorModeSelect from '../theme/ColorModeSelect';
-import { registerService } from '../services/AuthService';
+import { loginService } from '../services/AuthService';
 import { useNavigate } from 'react-router';
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -37,11 +37,8 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  minHeight: '100vh',
+  minHeight: '100%',
   padding: theme.spacing(2),
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
   },
@@ -61,38 +58,33 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignIn(props: Readonly<{ disableCustomTheme?: boolean }>) {
+export default function LogIn(props: Readonly<{ disableCustomTheme?: boolean }>) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const navigate = useNavigate();
-
   const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (emailError || passwordError) {
-      return;
-    }
     const formData = new FormData(event.currentTarget);
-    const data: Record<string, string> = {};
-
-    formData.forEach((value, key) => {
-      data[key] = value.toString();
-    });
-
-    const response =  await registerService(JSON.stringify(data));
-
-    if (response.status == 400) {
-      response.json().then((response) => {
-        alert(response.message);
-      })
-    }else if(response.status == 200){
-      navigate('/auth/login');      
-    }
+      const data: Record<string, string> = {};
+  
+      formData.forEach((value, key) => {
+        data[key] = value.toString();
+      });
+  
+      const response =  await loginService(JSON.stringify(data));
+      if (response.status == 400) {
+        response.json().then((response) => {
+          alert(response.message);
+        })
+      }else if(response.status == 200){
+        navigate('/dashboard/vehicles');      
+      }
   };
 
   const validateInputs = () => {
-    const email = document.getElementById('username') as HTMLInputElement;
+    const email = document.getElementById('email') as HTMLInputElement;
     const password = document.getElementById('password') as HTMLInputElement;
 
     let isValid = true;
@@ -123,17 +115,19 @@ export default function SignIn(props: Readonly<{ disableCustomTheme?: boolean }>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-        <Card variant="outlined" sx={{position:'relative', alignSelf:'center', justifyContent: 'center'}}>          
+        <Card variant="outlined">
+          
           <Typography
             component="h1"
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
-            Registro
+            Ingreso
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}          
+            onSubmit={handleSubmit}
+            noValidate
             sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -141,23 +135,6 @@ export default function SignIn(props: Readonly<{ disableCustomTheme?: boolean }>
               gap: 2,
             }}
           >
-            <FormControl>
-              <FormLabel htmlFor="fullname">Full Name</FormLabel>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="fullname"
-                type="fullname"
-                name="fullname"
-                placeholder="Juan Pablo Dulce"
-                autoFocus
-                required
-                fullWidth
-                autoComplete='off'
-                variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-              />
-            </FormControl>
             <FormControl>
               <FormLabel htmlFor="username">Email</FormLabel>
               <TextField
@@ -174,7 +151,7 @@ export default function SignIn(props: Readonly<{ disableCustomTheme?: boolean }>
                 variant="outlined"
                 color={emailError ? 'error' : 'primary'}
               />
-            </FormControl>                      
+            </FormControl>
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
@@ -191,29 +168,12 @@ export default function SignIn(props: Readonly<{ disableCustomTheme?: boolean }>
                 variant="outlined"
                 color={passwordError ? 'error' : 'primary'}
               />
-            </FormControl>  
-            <FormControl>
-              <FormLabel htmlFor="address">Dirección</FormLabel>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="address"
-                type="address"
-                name="address"
-                placeholder="Envigado, Antioquia"
-                autoFocus
-                required
-                fullWidth
-                autoComplete='off'
-                variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-              />
-            </FormControl>    
+            </FormControl>      
             <Button
               type="submit"
               fullWidth
-              variant="contained"   
-              onClick={validateInputs}                      
+              variant="contained"
+              onClick={validateInputs}
             >
               Sign in
             </Button>
@@ -221,13 +181,13 @@ export default function SignIn(props: Readonly<{ disableCustomTheme?: boolean }>
           <Divider>or</Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>           
             <Typography sx={{ textAlign: 'center' }}>
-              ¿Ya tienes una cuenta?{' '}
+              ¿No tienes una cuenta?{' '}
               <Link
-                href="/auth/login"
+                href="/auth/register"
                 variant="body2"
-                sx={{ alignSelf: 'center' }}                
+                sx={{ alignSelf: 'center' }}
               >
-                Ingresa
+                Registrate
               </Link>
             </Typography>
           </Box>
