@@ -6,11 +6,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { VehicleInterface } from '../interfaces/VehiclesInterface';
 import { Typography } from '@mui/material';
+import { ReportsInterface } from '../interfaces/ReportsInterface';
 
 interface Props {
-    reports:VehicleInterface[]
+    reports:ReportsInterface[]
 }
 
 export default function ListReports({reports}:Readonly<Props>) {
@@ -21,10 +21,12 @@ export default function ListReports({reports}:Readonly<Props>) {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                  <TableCell align="center">Matricula</TableCell>
-                  <TableCell align="center">Marca</TableCell>
-                  <TableCell align="center">Tipo De Vehiculo</TableCell>
-                  <TableCell align="center">Dueño</TableCell>
+                  <TableCell align="center">Vehiculo</TableCell>
+                  <TableCell align="center">Fecha</TableCell>
+                  <TableCell align="center">Descripcion</TableCell>
+                  <TableCell align="center">Precio</TableCell>
+                  <TableCell align="center">Agente de transito</TableCell>
+                  <TableCell align="center">Camara de detección</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -32,15 +34,15 @@ export default function ListReports({reports}:Readonly<Props>) {
 
                 reports.length > 0 && reports.map((row) => (
                   <TableRow
-                    key={row.id_vehicle}
+                    key={row.id_report}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {row.licensePlate}
+                      {row.vehicle}
                     </TableCell>
-                    <TableCell align="center">{row.brand}</TableCell>
-                    <TableCell align="center">{row.vehicleType}</TableCell>
-                    <TableCell align="center">{row.userId}</TableCell>              
+                    <TableCell align="center">{row.date}</TableCell>
+                    <TableCell align="center">{row.description}</TableCell>
+                    <TableCell align="center">{row.price}</TableCell>              
                   </TableRow>
                 ))              
               }
