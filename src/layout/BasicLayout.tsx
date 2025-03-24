@@ -1,13 +1,12 @@
 import * as React from 'react';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import LogoutIcon from '@mui/icons-material/Logout';
 import { AppProvider, Navigation, Router } from '@toolpad/core/AppProvider';
 import { extendTheme,  } from '@mui/material/styles';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
+import { getSessionService, logoutService } from '../services/AuthService';
 
 const NAVIGATION: Navigation = [
   {
@@ -31,9 +30,6 @@ const NAVIGATION: Navigation = [
     title: 'Reports',
     icon: <BarChartIcon />,
   },
-  {
-    kind: 'divider',
-  }
 ];
 
 const demoTheme = extendTheme({
@@ -66,12 +62,36 @@ function useDemoRouter(): Router {
 
 export default function DashboardLayoutBasic() {
   const router = useDemoRouter();
-
+  const navigate = useNavigate();
+  const [session, setSession] = React.useState<any>({
+    user: {
+      name: 'Usuario',
+      email: getSessionService(),
+      image: 'https://avatars.githubusercontent.com/u/19550456',
+    },
+  });
+  const authentication = React.useMemo(() => {
+    return {
+      signIn: () => {       
+      },
+      signOut: () => {
+        setSession(null);
+        logoutService();
+        navigate('/auth/login');
+      },
+    };
+  }, []);
   return (
     <AppProvider
       navigation={NAVIGATION}
       router={router}
       theme={demoTheme}
+      branding={{
+        title: 'Secretaria Movilidad',
+        homeUrl: '/vehicles',
+      }}
+      session={session}
+      authentication={authentication}
     >        
       <DashboardLayout>
         <PageContainer title='Dashboard De Vehiculos'>        

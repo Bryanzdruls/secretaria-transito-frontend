@@ -84,7 +84,7 @@ export default function LogIn(props: Readonly<{ disableCustomTheme?: boolean }>)
   };
 
   const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
+    const email = document.getElementById('username') as HTMLInputElement;
     const password = document.getElementById('password') as HTMLInputElement;
 
     let isValid = true;

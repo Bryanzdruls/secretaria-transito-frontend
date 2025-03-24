@@ -7,6 +7,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { createVehicleService } from '../services/VehiclesService';
+import { MenuItem } from '@mui/material';
+
+const vehicleTypes = [
+  { label: "SEDAN", value: "SEDAN" },
+  { label: "PICKUP", value: "PICKUP" },
+  { label: "MOTORCYCLE", value: "MOTORCYCLE" },
+];
+
 
 interface Props{
     open:boolean;
@@ -18,11 +26,14 @@ export default function CreateVehicle({open,setOpen}:Readonly<Props>) {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const formJson = Object.fromEntries((formData as any).entries());        
+        const data: Record<string, string> = {};
+  
+      formData.forEach((value, key) => {
+        data[key] = value.toString();
+      });  
         try {
-            const response = createVehicleService(JSON.stringify(formJson));
-            console.log({response});
-            
+            createVehicleService(JSON.stringify(data));
+                                
         } catch (error) {
             console.error(error);
         }
@@ -71,17 +82,22 @@ export default function CreateVehicle({open,setOpen}:Readonly<Props>) {
             fullWidth
             variant="standard"
           />
-          <TextField
-            autoFocus
+           <TextField
+            select
             required
             margin="dense"
             id="vehicleType"
             name="vehicleType"
-            label="Tipo de vehiculo"
-            type="text"
+            label="Tipo de vehículo"
             fullWidth
             variant="standard"
-          />
+          >
+            {vehicleTypes.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
             autoFocus
             required

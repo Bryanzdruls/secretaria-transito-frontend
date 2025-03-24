@@ -16,7 +16,7 @@ export const createVehicleService = async (body:any):Promise<any> => {
         method: 'POST',
         headers:{
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
+            'Content-Type':'application/json'
         },
         body:body,
     } );
