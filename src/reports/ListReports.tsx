@@ -38,11 +38,13 @@ export default function ListReports({reports}:Readonly<Props>) {
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {row.vehicle}
+                      {row.licensePlate}
                     </TableCell>
                     <TableCell align="center">{row.date}</TableCell>
                     <TableCell align="center">{row.description}</TableCell>
-                    <TableCell align="center">{row.price}</TableCell>              
+                    <TableCell align="center">{row.price}</TableCell>
+                    <TableCell align="center">{row.trafficAgentName}</TableCell>
+                    <TableCell align="center">{row.cameraLocation}</TableCell>    
                   </TableRow>
                 ))              
               }
