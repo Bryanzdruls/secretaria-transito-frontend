@@ -27,7 +27,7 @@ export const loadReportsByVehiclesService = async (id_vehicle:number):Promise<Re
 export const generatePdfService = async (id_ticket:number,id_usuario:number) => {  
     const response = await fetch(`${API}/traffic-ticket/report?trafficTicketId=${id_ticket}&userId=${id_usuario}`,{
         method: 'GET',
-        headers:{
+        headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Content-Type':'application/json'
         }

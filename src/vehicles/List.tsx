@@ -40,7 +40,7 @@ export default function ListVehicle({vehicles}:Readonly<Props>) {
                     </TableCell>
                     <TableCell align="center">{row.brand}</TableCell>
                     <TableCell align="center">{row.vehicleType}</TableCell>
-                    <TableCell align="center">{row.userId}</TableCell>              
+                    <TableCell align="center">{row.ownerName}</TableCell>              
                   </TableRow>
                 ))              
               }

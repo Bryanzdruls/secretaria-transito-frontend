@@ -1,9 +1,11 @@
 export interface ReportsInterface {
     trafficTicketId:number;
-    vehicleId:string;
+    vehicleId: number;
+    userId: number;
+    licensePlate:string;
     date: string;
     description:string;
     price:string
-    trafficAgentId:string;
-    detectionCameraId: string;
+    trafficAgentName:string;
+    cameraLocation: string;
 }

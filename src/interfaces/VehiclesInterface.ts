@@ -3,5 +3,5 @@ export interface VehicleInterface {
     licensePlate:string;
     brand:string;
     vehicleType:string;
-    userId:number;
+    ownerName:String;
 }
