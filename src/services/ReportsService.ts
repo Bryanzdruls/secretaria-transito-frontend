@@ -14,7 +14,7 @@ export const loadReportsByUserService = async (id_user:number):Promise<ReportsIn
 
 
 export const loadReportsByVehiclesService = async (id_vehicle:number):Promise<ReportsInterface[]> => {  
-    const response = await fetch(`${API}/traffic-ticket/${id_vehicle}`,{
+    const response = await fetch(`${API}/traffic-ticket/vehicle/${id_vehicle}`,{
         method: 'GET',
         headers:{
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
