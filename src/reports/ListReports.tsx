@@ -16,9 +16,9 @@ interface Props {
 
 export default function ListReports({ reports }: Readonly<Props>) {
     
-    const handleDownload = async (id_ticket: number, id_usuario: number, id_vehicle: number) => {
+    const handleDownload = async (id_ticket: number, id_usuario: number) => {
         try {
-            await generatePdfService(id_ticket, id_usuario, id_vehicle);
+            await generatePdfService(id_ticket, id_usuario);
         } catch (error) {
             console.error('Error al generar el PDF:', error);
         }
@@ -57,7 +57,7 @@ export default function ListReports({ reports }: Readonly<Props>) {
                                     <Button 
                                         variant="contained" 
                                         color="primary"
-                                        onClick={() => handleDownload(row.trafficTicketId, row.userId, row.vehicleId)}
+                                        onClick={() => handleDownload(row.trafficTicketId, row.userId)}
                                     >
                                         Descargar PDF
                                     </Button>
