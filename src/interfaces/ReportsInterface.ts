@@ -1,5 +1,7 @@
 export interface ReportsInterface {
-    id_report:number;
+    trafficTicketId:number;
+    vehicleId: number;
+    userId: number;
     licensePlate:string;
     date: string;
     description:string;
