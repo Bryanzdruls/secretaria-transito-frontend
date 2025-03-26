@@ -4,103 +4,90 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { MenuItem } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import { generatePdfService } from '../services/ReportsService';
 
-const vehicleTypes = [
-  { label: "SEDAN", value: "SEDAN" },
-  { label: "PICKUP", value: "PICKUP" },
-  { label: "MOTORCYCLE", value: "MOTORCYCLE" },
-];
-
-
-interface Props{
-    open:boolean;
-    setOpen: React.Dispatch<any>
+interface Props {
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function GetReportModal({open,setOpen}:Readonly<Props>) {
-  
-    const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+export default function GetReportModal({ open, setOpen }: Readonly<Props>) {
+    const [error, setError] = React.useState<string | null>(null);
+    const [loading, setLoading] = React.useState<boolean>(false);
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setError(null);
+        setLoading(true);
+
         const formData = new FormData(event.currentTarget);
-        const data: Record<string, string> = {};
-  
-      formData.forEach((value, key) => {
-        data[key] = value.toString();
-      });  
+        const id_usuario = formData.get("userId")?.toString();
+        const id_ticket_transito = formData.get("trafficTicketId")?.toString();
+
+        if (!id_usuario || !id_ticket_transito) {
+            setError("Todos los campos son obligatorios");
+            setLoading(false);
+            return;
+        }
+
         try {
-            const payload = {  id_usuario: data.userId,
-                id_vehiculo: data.idVehicle,
-                id_ticket_transito: data.trafficTicketId,
-            }
-            await generatePdfService(parseInt(payload.id_ticket_transito), parseInt(payload.id_usuario), parseInt(payload.id_vehiculo));                                
+            await generatePdfService(parseInt(id_ticket_transito), parseInt(id_usuario));
+            handleClose();
         } catch (error) {
             console.error(error);
+            setError("Error al generar el reporte. Intenta nuevamente.");
+        } finally {
+            setLoading(false);
         }
-        handleClose();
-    }
+    };
 
     const handleClose = () => {
         setOpen(false);
+        setError(null);
     };
 
-  return (
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        slotProps={{
-          paper: {
-            component: 'form',
-            onSubmit: handleSubmit 
-          },
-        }}
-      >
-        <DialogTitle>Generar Reporte</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-           
-          </DialogContentText>
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="idVehicle"
-            name="idVehicle"
-            label="Id de vehiculo"
-            type="number"
-            fullWidth
-            variant="standard"
-          />
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="trafficTicketId"
-            name="trafficTicketId"
-            label="Id de ticket de tránsito"
-            type="number"
-            fullWidth
-            variant="standard"
-          />          
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="userId"
-            name="userId"
-            label="Id de usuario"
-            type="number"
-            fullWidth
-            variant="standard"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Obtener</Button>
-        </DialogActions>
-      </Dialog>
-  );
+    return (
+        <Dialog
+            open={open}
+            onClose={handleClose}
+            slotProps={{
+                paper: {
+                    component: 'form',
+                    onSubmit: handleSubmit,
+                },
+            }}
+        >
+            <DialogTitle>Generar Reporte</DialogTitle>
+            <DialogContent>
+                {error && <Alert severity="error">{error}</Alert>}
+                <TextField
+                    autoFocus
+                    required
+                    margin="dense"
+                    id="trafficTicketId"
+                    name="trafficTicketId"
+                    label="Id de ticket de tránsito"
+                    type="number"
+                    fullWidth
+                    variant="standard"
+                />
+                <TextField
+                    required
+                    margin="dense"
+                    id="userId"
+                    name="userId"
+                    label="Id de usuario"
+                    type="number"
+                    fullWidth
+                    variant="standard"
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} disabled={loading}>Cancelar</Button>
+                <Button type="submit" disabled={loading}>{loading ? "Generando..." : "Obtener"}</Button>
+            </DialogActions>
+        </Dialog>
+    );
 }

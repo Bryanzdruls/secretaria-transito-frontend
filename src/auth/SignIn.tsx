@@ -142,13 +142,13 @@ export default function SignIn(props: Readonly<{ disableCustomTheme?: boolean }>
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="fullname">Full Name</FormLabel>
+              <FormLabel htmlFor="fullName">Full Name</FormLabel>
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
-                id="fullname"
-                type="fullname"
-                name="fullname"
+                id="fullName"
+                type="fullName"
+                name="fullName"
                 placeholder="Juan Pablo Dulce"
                 autoFocus
                 required
