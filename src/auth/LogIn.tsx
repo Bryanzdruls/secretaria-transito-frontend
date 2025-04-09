@@ -72,14 +72,18 @@ export default function LogIn(props: Readonly<{ disableCustomTheme?: boolean }>)
       formData.forEach((value, key) => {
         data[key] = value.toString();
       });
-  
-      const response =  await loginService(JSON.stringify(data));
-      if (response.status == 400) {
-        response.json().then((response) => {
-          alert(response.message);
-        })
-      }else if(response.status == 200){
-        navigate('/dashboard/vehicles');      
+       
+      try {            
+        const response =  await loginService(JSON.stringify(data));
+        if (response.status == 400) {
+          response.json().then((response:any) => {
+            alert(response.message);
+          })
+        }else{
+          navigate('/dashboard/vehicles');        
+        }
+      } catch (error) {
+        alert("Error iniciando sesion");
       }
   };
 

@@ -1,56 +1,130 @@
 import { API } from "../environment";
 import { ReportsInterface } from "../interfaces/ReportsInterface";
 
-export const loadReportsByUserService = async (id_user:number):Promise<ReportsInterface[]> => {  
-    const response = await fetch(`${API}/traffic-ticket/user/${id_user}`,{
-        method: 'GET',
-        headers:{
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type':'application/json'
+export const loadReportsByUserService = async (id_user: number): Promise<ReportsInterface[]> => {
+    const query = `
+      query GetTrafficTicketByUserId($userId: Int!) {
+        getTrafficTicketByUserId(userId: $userId) {
+          trafficTicketId
+          userId
+          vehicleId
+          licensePlate
+          date
+          description
+          price
+          trafficAgentName
+          cameraLocation
         }
-    } );
-    return response.json();
-}
+      }
+    `;
+  
+    const response = await fetch(`${API}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query,
+        variables: { userId: id_user }
+      })
+    });
+  
+    const { data } = await response.json();
+    return data.getTrafficTicketByUserId;
+  };
+  
 
 
-export const loadReportsByVehiclesService = async (id_vehicle:number):Promise<ReportsInterface[]> => {  
-    const response = await fetch(`${API}/traffic-ticket/vehicle/${id_vehicle}`,{
-        method: 'GET',
-        headers:{
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type':'application/json'
+  export const loadReportsByVehiclesService = async (id_vehicle: number): Promise<ReportsInterface[]> => {
+    const query = `
+      query GetTrafficTicketByVehicleId($vehicleId: ID!) {
+        getTrafficTicketByVehicleId(vehicleId: $vehicleId) {
+          trafficTicketId
+          userId
+          vehicleId
+          licensePlate
+          date
+          description
+          price
+          trafficAgentName
+          cameraLocation
         }
-    } );
-    return response.json();
-}
+      }
+    `;
+  
+    const response = await fetch(`${API}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query,
+        variables: { vehicleId: id_vehicle }
+      })
+    });
+  
+    const { data } = await response.json();
+    return data.getTrafficTicketByVehicleId;
+  };
 
-export const generatePdfService = async (id_ticket:number,id_usuario:number) => {  
-    const response = await fetch(`${API}/traffic-ticket/report?trafficTicketId=${id_ticket}&userId=${id_usuario}`,{
-        method: 'GET',
-        headers:{
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type':'application/json'
-        }
-    } );
-    if (!response.ok) {
-        throw new Error(`Error al generar el PDF: ${response.statusText}`);
+export const generatePdfService = async (id_ticket: number, id_usuario: number, to_email: string) => {
+  const mutation = `
+    mutation GenerateInvoicePdf($userId: Int!, $trafficTicketId: ID!) {
+      generateInvoicePdf(userId: $userId, trafficTicketId: $trafficTicketId)
     }
+  `;
 
-    const res = await response.blob();
-    downloadPdf(res);
-}
+  const response = await fetch(`${API}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: mutation,
+      variables: {
+        userId: id_usuario,
+        trafficTicketId: id_ticket
+      }
+    })
+  });
 
-const downloadPdf = async (blob:Blob) => {
-    try {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'reporte.pdf'; // Nombre del archivo
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url); // Limpia la memoria
-    } catch (error) {
-        console.error('Error al descargar el PDF', error);
-    }
+  const { data, errors } = await response.json();
+  if (errors) throw new Error(errors[0].message);
+
+  const base64Pdf = data.generateInvoicePdf;
+  console.log(base64Pdf);
+  
+  // Enviar el correo con EmailJS
+  const res =await sendEmailWithAttachment(base64Pdf, to_email);
+  return res;
+  // (Opcional) Descargar el PDF localmente
+  // downloadPdfFromBase64(base64Pdf);
+};
+
+  
+const sendEmailWithAttachment = async (base64Pdf: string, to_email: string) => {
+  return await fetch('http://localhost:3001/send-email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      to: to_email,
+      subject: 'Multa de Tránsito',
+      text: 'Tiene una multa pendiente. Por favor revise el archivo PDF adjunto.',
+      attachment: base64Pdf,
+    }),
+  });
+};
+
+const downloadPdfFromBase64 = (base64Data: string) => {
+  const link = document.createElement('a');
+  link.href = `data:application/pdf;base64,${base64Data}`;
+  link.download = 'invoice.pdf';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };

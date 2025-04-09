@@ -79,15 +79,18 @@ export default function SignIn(props: Readonly<{ disableCustomTheme?: boolean }>
     formData.forEach((value, key) => {
       data[key] = value.toString();
     });
-
-    const response =  await registerService(JSON.stringify(data));
-
-    if (response.status == 400) {
-      response.json().then((response) => {
-        alert(response.message);
-      })
-    }else if(response.status == 200){
-      navigate('/auth/login');      
+    try {
+      
+      const response =  await registerService(JSON.stringify(data));
+      if (response.status == 400) {
+        response.json().then((response:any) => {
+          alert(response.message);
+        })
+      }else{
+        navigate('/auth/login');      
+      }
+    } catch (error) {
+      alert("Error registrandose sesion");
     }
   };
 

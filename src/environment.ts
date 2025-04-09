@@ -1,1 +1,1 @@
-export const API = "http://localhost:8081/api/1.0";
+export const API = "http://localhost:8081/graphql";

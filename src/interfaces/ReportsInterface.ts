@@ -4,6 +4,6 @@ export interface ReportsInterface {
     date: string;
     description:string;
     price:string
-    trafficAgentId:string;
-    detectionCameraId: string;
+    trafficAgentName:string;
+    cameraLocation: string;
 }

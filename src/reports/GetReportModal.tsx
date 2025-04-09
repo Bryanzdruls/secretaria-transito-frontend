@@ -25,19 +25,26 @@ export default function GetReportModal({ open, setOpen }: Readonly<Props>) {
         const formData = new FormData(event.currentTarget);
         const id_usuario = formData.get("userId")?.toString();
         const id_ticket_transito = formData.get("trafficTicketId")?.toString();
+        const email = formData.get("email")?.toString();
 
-        if (!id_usuario || !id_ticket_transito) {
+        if (!id_usuario || !id_ticket_transito || !email) {
             setError("Todos los campos son obligatorios");
             setLoading(false);
             return;
         }
 
         try {
-            await generatePdfService(parseInt(id_ticket_transito), parseInt(id_usuario));
+            const res =await generatePdfService(parseInt(id_ticket_transito), parseInt(id_usuario),email) as any;       
+            if (res.status  == 200) {
+                alert("Correo enviado exitosamente");
+            }else{
+                setError("Error al enviar el correo");
+                return;
+            }
             handleClose();
         } catch (error) {
             console.error(error);
-            setError("Error al generar el reporte. Intenta nuevamente.");
+            setError("Error al enviar el correo. Intenta nuevamente.");
         } finally {
             setLoading(false);
         }
@@ -62,6 +69,17 @@ export default function GetReportModal({ open, setOpen }: Readonly<Props>) {
             <DialogTitle>Generar Reporte</DialogTitle>
             <DialogContent>
                 {error && <Alert severity="error">{error}</Alert>}
+                <TextField
+                    autoFocus
+                    required
+                    margin="dense"
+                    id="email"
+                    name="email"
+                    label="Email destinatario"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                />
                 <TextField
                     autoFocus
                     required

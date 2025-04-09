@@ -37,6 +37,7 @@ export const ReportPage = () => {
       setReports([]);
       if (userId) {
         const response = await loadReportsByUserService(parseInt(userId));
+        
         setReports(response);
       } else if (vehicleId) {
         const response = await loadReportsByVehiclesService(parseInt(vehicleId));

@@ -43,8 +43,8 @@ export default function ListReports({reports}:Readonly<Props>) {
                     <TableCell align="center">{row.date}</TableCell>
                     <TableCell align="center">{row.description}</TableCell>
                     <TableCell align="center">{row.price}</TableCell>              
-                    <TableCell align="center">{row.trafficAgentId}</TableCell>              
-                    <TableCell align="center">{row.detectionCameraId}</TableCell>      
+                    <TableCell align="center">{row.trafficAgentName}</TableCell>              
+                    <TableCell align="center">{row.cameraLocation}</TableCell>      
                   </TableRow>
                 ))              
               }

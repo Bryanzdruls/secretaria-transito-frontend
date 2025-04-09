@@ -1,39 +1,102 @@
-import { API } from "../environment";
+import { API } from "../environment";export const registerService = async (body: any) => {
+  try {
+    const parsedBody = JSON.parse(body);
 
-export const registerService = async (body:any) => {
-    console.log({body});
-    
-const response = await fetch(`${API}/auth/register`,{
-        method: 'POST',
-        headers:{            
-            'Content-Type': 'application/json',
-        },
-        body:body,
-    });
-    console.log(response);
-    
-    localStorage.setItem('token', '');
-    return response;
-}
+    const query = `
+      mutation RegisterUser($registerRequest: RegisterRequestInput!) {
+        registerUser(registerRequest: $registerRequest) {
+          idUsuario
+          nombreCompleto
+          username
+          role
+        }
+      }
+    `;
 
-export const loginService = async (body:any) => {
-    const response = await fetch(`${API}/auth/login`,{
-        method: 'POST',
-        headers:{            
-            'Content-Type': 'application/json',
-        },
-        body:body,
+    const response = await fetch(`${API}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          registerRequest: {
+            address: parsedBody.address,
+            fullName: parsedBody.fullName,
+            username: parsedBody.username,
+            password: parsedBody.password
+          }
+        }
+      })
     });
-    if(response.status == 200){
-        const data = await response.json();
-        localStorage.setItem('token', data.accessToken);
-        console.log({body});
-        
-        localStorage.setItem('session', JSON.parse(body).username);
+
+    const json = await response.json();
+
+    if (json.errors) {
+      throw new Error(json.errors[0]?.message || 'Error en GraphQL');
     }
-    
-    return response;
-}
+
+    return json.data;
+  } catch (error) {
+    console.error('Error en registerService:', error);
+    throw error;
+  }
+};
+
+  
+  
+export const loginService = async (body: any) => {
+  try {
+    const parsedBody = JSON.parse(body);
+
+    const query = `
+      mutation Login($input: AuthRequestInput!) {
+        login(authRequest: $input) {
+          accessToken
+          refreshToken
+          role
+        }
+      }
+    `;
+
+    const response = await fetch(`${API}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          input: {
+            username: parsedBody.username,
+            password: parsedBody.password
+          }
+        }
+      })
+    });
+
+    const json = await response.json();
+
+    if (json.errors) {
+      throw new Error(json.errors[0]?.message || 'Error en GraphQL');
+    }
+
+    const tokens = json.data?.login;
+
+    if (tokens?.accessToken) {
+      localStorage.setItem('token', tokens.accessToken);
+      localStorage.setItem('session', parsedBody.username);
+    }
+
+    return json.data;
+  } catch (error) {
+    console.error('Error en loginService:', error);
+    throw error;
+  }
+};
+
+  
 
 
 export const logoutService = () => {
